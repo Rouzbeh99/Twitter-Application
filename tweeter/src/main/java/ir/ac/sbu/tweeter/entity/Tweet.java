@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,19 +31,23 @@ public class Tweet {
 
     @ManyToMany(mappedBy = "likedTweets")
     @ToString.Exclude
-    private List<User> likedBy;
+    @Builder.Default
+    private List<User> likedBy = new ArrayList<>();
 
     @ManyToMany()
     @ToString.Exclude
-    private List<User> retweetedBy;
+    @Builder.Default
+    private List<User> retweetedBy = new ArrayList<>();
 
     @ManyToMany(mappedBy = "tweets")
     @ToString.Exclude
-    private List<Hashtag> hashtags;
+    @Builder.Default
+    private List<Hashtag> hashtags = new ArrayList<>();
 
     @OneToMany
     @NotEmpty
-    private List<Reply> replies;
+    @Builder.Default
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinTable(

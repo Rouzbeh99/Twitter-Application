@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +48,7 @@ public class UserManager {
     @Transactional
     public void update(String username, UserUpdateRequestDto dto) {
         User user = loadByUsername(username);
-        User newUser = User.builder()
-                .id(user.getId())
-                .username(dto.getNewUsername())
-                .name(dto.getNewName())
-                .password(dto.getNewPassword())
-                .build();
+        User newUser = createUpdatedUser(user,dto);
         userDao.update(newUser);
     }
 
@@ -103,6 +99,18 @@ public class UserManager {
         follower.getFollowings().remove(followed);
         userDao.update(followed);
         userDao.update(follower);
+    }
+
+    private User createUpdatedUser(User user, UserUpdateRequestDto dto){
+        String username = StringUtils.hasText(dto.getNewUsername()) ? dto.getNewUsername(): user.getUsername();
+        String name = StringUtils.hasText(dto.getNewName()) ? dto.getNewName(): user.getName();
+        String password = StringUtils.hasText(dto.getNewPassword()) ? dto.getNewPassword(): user.getPassword();
+        return User.builder()
+                .id(user.getId())
+                .username(username)
+                .name(name)
+                .password(password)
+                .build();
     }
 
 //    @Transactional

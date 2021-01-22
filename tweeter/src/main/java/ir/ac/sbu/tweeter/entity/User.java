@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,28 +19,34 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String password;
 
-    @NotNull
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
     @ManyToMany()
     @ToString.Exclude
-    private List<Tweet> likedTweets;
+    @Builder.Default
+    private List<Tweet> likedTweets = new ArrayList<>();
 
     @ManyToMany()
     @ToString.Exclude
-    private List<User> followers;
+    @Builder.Default
+    private List<User> followers = new ArrayList<>();
 
     @ManyToMany()
     @ToString.Exclude
-    private List<User> followings;
+    @Builder.Default
+    private List<User> followings = new ArrayList<>();
 
     @OneToMany
     @ToString.Exclude
-    private List<Tweet> tweets;
+    @Builder.Default
+    private List<Tweet> tweets = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinTable(
