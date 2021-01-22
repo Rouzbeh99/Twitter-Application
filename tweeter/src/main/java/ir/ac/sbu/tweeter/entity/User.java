@@ -4,6 +4,7 @@ package ir.ac.sbu.tweeter.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -20,9 +21,9 @@ public class User {
     private String name;
     private String password;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(unique = true)
-    private Username username;
+    @NotNull
+    @Column(unique = true)
+    private String username;
 
     @ManyToMany()
     @ToString.Exclude

@@ -40,10 +40,6 @@ public class Tweet {
     @ToString.Exclude
     private List<Hashtag> hashtags;
 
-    @ManyToMany()
-    @ToString.Exclude
-    private List<Username> mentions;
-
     @OneToMany
     @NotEmpty
     private List<Reply> replies;
