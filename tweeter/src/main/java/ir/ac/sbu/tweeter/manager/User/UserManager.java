@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,12 @@ public class UserManager {
 
     @Transactional
     public void save(UserSaveRequestDto saveDto) {
-        User entity = createEntity(saveDto);
-        userDao.save(entity);
+        try {
+            User entity = createEntity(saveDto);
+            userDao.save(entity);
+        } catch (ConstraintViolationException e) {
+            throw new UserExistsException(saveDto.getUsername());
+        }
     }
 
     private User createEntity(UserSaveRequestDto saveDto) {
@@ -48,12 +53,12 @@ public class UserManager {
     @Transactional
     public void update(String username, UserUpdateRequestDto dto) {
         User user = loadByUsername(username);
-        User newUser = createUpdatedUser(user,dto);
+        User newUser = createUpdatedUser(user, dto);
         userDao.update(newUser);
     }
 
     @Transactional
-    public void delete(String  username) {
+    public void delete(String username) {
         User user = loadByUsername(username);
         userDao.delete(username);
         log.info("user with username : {} deleted", userDao);
@@ -67,13 +72,13 @@ public class UserManager {
     }
 
     @Transactional
-    public boolean authenticate(String username, String password){
+    public boolean authenticate(String username, String password) {
         User user = loadByUsername(username);
         return user.getPassword().equals(password);
     }
 
     @Transactional
-    public List<User> retrieveUsers(List<String> usernames){
+    public List<User> retrieveUsers(List<String> usernames) {
         List<User> result = new ArrayList<>();
         for (String username : usernames) {
             result.add(loadByUsername(username));
@@ -82,7 +87,7 @@ public class UserManager {
     }
 
     @Transactional
-    public void follow(String followedUsername, String followerUsername){
+    public void follow(String followedUsername, String followerUsername) {
         User followed = loadByUsername(followedUsername);
         User follower = loadByUsername(followerUsername);
         followed.getFollowers().add(follower);
@@ -92,7 +97,7 @@ public class UserManager {
     }
 
     @Transactional
-    public void unFollow(String followedUsername, String followerUsername){
+    public void unFollow(String followedUsername, String followerUsername) {
         User followed = loadByUsername(followedUsername);
         User follower = loadByUsername(followerUsername);
         followed.getFollowers().remove(follower);
@@ -101,10 +106,10 @@ public class UserManager {
         userDao.update(follower);
     }
 
-    private User createUpdatedUser(User user, UserUpdateRequestDto dto){
-        String username = StringUtils.hasText(dto.getNewUsername()) ? dto.getNewUsername(): user.getUsername();
-        String name = StringUtils.hasText(dto.getNewName()) ? dto.getNewName(): user.getName();
-        String password = StringUtils.hasText(dto.getNewPassword()) ? dto.getNewPassword(): user.getPassword();
+    private User createUpdatedUser(User user, UserUpdateRequestDto dto) {
+        String username = StringUtils.hasText(dto.getNewUsername()) ? dto.getNewUsername() : user.getUsername();
+        String name = StringUtils.hasText(dto.getNewName()) ? dto.getNewName() : user.getName();
+        String password = StringUtils.hasText(dto.getNewPassword()) ? dto.getNewPassword() : user.getPassword();
         return User.builder()
                 .id(user.getId())
                 .username(username)
