@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserFollow_UnFollowDto {
-    private String followed;
-    private String following;
+    private String followedUsername;
+    private String followingUsername;
 }

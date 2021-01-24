@@ -18,9 +18,10 @@ public class UserDao {
     EntityManager entityManager;
 
     public void save(User user) {
-        log.debug("going to save user to db :{}", user);
+        log.info("going to save user to db :{}", user);
         entityManager.persist(user);
-        log.debug("user is saved to database. Id is : {}", user.getId());
+        entityManager.flush();
+        log.info("user is saved to database. Id is : {}", user.getId());
     }
 
     public User loadByUsername(String username) {
@@ -48,7 +49,8 @@ public class UserDao {
 
     public void update(User user) {
         entityManager.merge(user);
-        log.debug("category with code : {} updated", user.getUsername());
+        entityManager.flush();
+        log.debug("user with username : {} updated", user.getUsername());
     }
 
     public List<User> search(UserSearchDto dto) {

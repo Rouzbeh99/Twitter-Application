@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.Response.*;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -62,7 +63,7 @@ public class UserService {
     @GET
     @Path("{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loadByCode(@PathParam("username") String username) {
+    public Response loadByUsername(@PathParam("username") String username) {
         Response response;
         try {
             User user = userManager.loadByUsername(username);
@@ -104,9 +105,13 @@ public class UserService {
                     UserResponseDto.builder()
                             .name(user.getName())
                             .username(user.getUsername())
+                            .password(user.getPassword())
                             .build());
         }
-        return Response.ok(userResponseDtos).build();
+        UserPageDto resultDto = UserPageDto.builder()
+                .users(userResponseDtos)
+                .build();
+        return Response.ok(resultDto).build();
 
     }
 
@@ -117,7 +122,7 @@ public class UserService {
     public Response follow(UserFollow_UnFollowDto dto) {
         Response response;
         try {
-            userManager.follow(dto.getFollowed(),dto.getFollowing());
+            userManager.follow(dto.getFollowedUsername(), dto.getFollowingUsername());
             response = ok().build();
         } catch (UserNotFoundException e) {
             response = status(NOT_FOUND).build();
@@ -132,7 +137,7 @@ public class UserService {
     public Response unFollow(UserFollow_UnFollowDto dto) {
         Response response;
         try {
-            userManager.unFollow(dto.getFollowed(),dto.getFollowing());
+            userManager.unFollow(dto.getFollowedUsername(), dto.getFollowingUsername());
             response = ok().build();
         } catch (UserNotFoundException e) {
             response = status(NOT_FOUND).build();
@@ -144,14 +149,16 @@ public class UserService {
     @Path("authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response authdnticate(UserSaveRequestDto dto) {
+    public Response authenticate(@QueryParam("username") String username,
+                                 @QueryParam("name") String name,
+                                 @QueryParam("password") String password) {
         Response response;
         try {
-            User user = userManager.loadByUsername(dto.getUsername());
-            if(user.getName().equals(dto.getName()) && user.getPassword().equals(dto.getPassword())) {
+            User user = userManager.loadByUsername(username);
+            if (user.getName().equals(name) && user.getPassword().equals(password)) {
                 response = ok().build();
-            }else {
-                response =  status(NOT_FOUND).build();
+            } else {
+                response = status(NOT_FOUND).build();
             }
         } catch (UserNotFoundException e) {
             response = status(NOT_FOUND).build();
@@ -160,13 +167,14 @@ public class UserService {
     }
 
 
-
-
     private UserResponseDto createResponseDto(User user) {
+
         return UserResponseDto.builder()
                 .name(user.getName())
                 .username(user.getUsername())
                 .password(user.getPassword())
+                .followersUsername(user.getFollowers().stream().map(User::getUsername).collect(Collectors.toList()))
+                .followingsUsername(user.getFollowings().stream().map(User::getUsername).collect(Collectors.toList()))
                 .build();
     }
 

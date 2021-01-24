@@ -32,7 +32,7 @@ public class UserManager {
         try {
             User entity = createEntity(saveDto);
             userDao.save(entity);
-        } catch (ConstraintViolationException e) {
+        } catch (Exception e) {
             throw new UserExistsException(saveDto.getUsername());
         }
     }
@@ -47,7 +47,12 @@ public class UserManager {
 
     @Transactional
     public User loadByUsername(String username) {
-        return userDao.loadByUsername(username);
+        User user = userDao.loadByUsername(username);
+        List<User> followers = user.getFollowers();
+        List<User> followings = user.getFollowings();
+        log.info("followers are :{}",followers);
+        log.info("followings are :{}",followings);
+        return user;
     }
 
     @Transactional
@@ -59,7 +64,6 @@ public class UserManager {
 
     @Transactional
     public void delete(String username) {
-        User user = loadByUsername(username);
         userDao.delete(username);
         log.info("user with username : {} deleted", userDao);
     }
@@ -71,11 +75,6 @@ public class UserManager {
         return users;
     }
 
-    @Transactional
-    public boolean authenticate(String username, String password) {
-        User user = loadByUsername(username);
-        return user.getPassword().equals(password);
-    }
 
     @Transactional
     public List<User> retrieveUsers(List<String> usernames) {
@@ -92,6 +91,8 @@ public class UserManager {
         User follower = loadByUsername(followerUsername);
         followed.getFollowers().add(follower);
         follower.getFollowings().add(followed);
+        log.info("followed is :{}", followed);
+        log.info("follower is :{}", follower);
         userDao.update(followed);
         userDao.update(follower);
     }
@@ -102,6 +103,8 @@ public class UserManager {
         User follower = loadByUsername(followerUsername);
         followed.getFollowers().remove(follower);
         follower.getFollowings().remove(followed);
+        log.info("followed is :{}", followed);
+        log.info("follower is :{}", follower);
         userDao.update(followed);
         userDao.update(follower);
     }

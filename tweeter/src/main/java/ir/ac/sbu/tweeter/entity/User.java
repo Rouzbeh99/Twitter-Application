@@ -4,7 +4,6 @@ package ir.ac.sbu.tweeter.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,33 +27,33 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<Tweet> likedTweets = new ArrayList<>();
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<User> followers = new ArrayList<>();
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<User> followings = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<Tweet> tweets = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(
-            name = "WH_USER_MEDIA",
-            joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
-    )
-    private Media profilePicture;
+//    @OneToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinTable(
+//            name = "WH_USER_MEDIA",
+//            joinColumns = @JoinColumn(name = "USER_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
+//    )
+//    private Media profilePicture;
 
 
 }

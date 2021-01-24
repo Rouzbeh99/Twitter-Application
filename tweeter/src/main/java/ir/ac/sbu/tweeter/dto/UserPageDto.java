@@ -12,13 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
-    private String name;
-    private String username;
-    private String password;
+public class UserPageDto {
     @Builder.Default
-    private List<String> followersUsername = new ArrayList<>();
-    @Builder.Default
-    private List<String> followingsUsername = new ArrayList<>();
-
+    private List<UserResponseDto> users = new ArrayList<>();
 }
