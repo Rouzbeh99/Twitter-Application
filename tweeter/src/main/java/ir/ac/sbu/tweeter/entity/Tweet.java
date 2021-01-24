@@ -39,10 +39,12 @@ public class Tweet {
     @Builder.Default
     private List<User> retweetedBy = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "tweets")
-    @ToString.Exclude
-    @Builder.Default
-    private List<Hashtag> hashtags = new ArrayList<>();
+    @ElementCollection
+    @CollectionTable(
+            name = "Tweet_Hashtag",
+            joinColumns = @JoinColumn(name = "Tweet_ID"))
+    @Column(name = "Hashtag")
+    private List<String> hashtags = new ArrayList<>();
 
     @OneToMany
     @NotEmpty

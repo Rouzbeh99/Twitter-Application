@@ -65,7 +65,7 @@ public class UserManager {
     @Transactional
     public void delete(String username) {
         userDao.delete(username);
-        log.info("user with username : {} deleted", userDao);
+        log.info("user with username : {} deleted", username);
     }
 
     @Transactional
@@ -103,11 +103,10 @@ public class UserManager {
         User follower = loadByUsername(followerUsername);
         followed.getFollowers().remove(follower);
         follower.getFollowings().remove(followed);
-        log.info("followed is :{}", followed);
-        log.info("follower is :{}", follower);
         userDao.update(followed);
         userDao.update(follower);
     }
+
 
     private User createUpdatedUser(User user, UserUpdateRequestDto dto) {
         String username = StringUtils.hasText(dto.getNewUsername()) ? dto.getNewUsername() : user.getUsername();
