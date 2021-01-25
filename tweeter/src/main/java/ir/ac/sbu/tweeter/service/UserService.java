@@ -1,6 +1,8 @@
 package ir.ac.sbu.tweeter.service;
 
 import ir.ac.sbu.tweeter.dto.*;
+import ir.ac.sbu.tweeter.entity.Media;
+import ir.ac.sbu.tweeter.entity.Tweet;
 import ir.ac.sbu.tweeter.entity.User;
 import ir.ac.sbu.tweeter.manager.User.UserExistsException;
 import ir.ac.sbu.tweeter.manager.User.UserManager;
@@ -74,6 +76,28 @@ public class UserService {
         return response;
     }
 
+    @POST
+    @Path("users")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsers(UserListDto dto) {
+        Response response;
+        try {
+            List<User> users = userManager.retrieveUsers(dto.getUsernames());
+            List<UserResponseDto> userResponseDtos = new ArrayList<>();
+            for (User user : users) {
+                userResponseDtos.add(createResponseDto(user));
+            }
+            UserPageDto resultDto = UserPageDto.builder()
+                    .users(userResponseDtos)
+                    .build();
+           response = ok(resultDto).build();
+        } catch (UserNotFoundException e) {
+            response = status(NOT_FOUND).build();
+        }
+        return response;
+    }
+
     @PUT
     @Path("{username}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,12 +124,7 @@ public class UserService {
         List<User> userList = userManager.search(dto);
         List<UserResponseDto> userResponseDtos = new ArrayList<>();
         for (User user : userList) {
-            userResponseDtos.add(
-                    UserResponseDto.builder()
-                            .name(user.getName())
-                            .username(user.getUsername())
-                            .password(user.getPassword())
-                            .build());
+            userResponseDtos.add(createResponseDto(user));
         }
         UserPageDto resultDto = UserPageDto.builder()
                 .users(userResponseDtos)
@@ -166,8 +185,6 @@ public class UserService {
     }
 
 
-
-
     private UserResponseDto createResponseDto(User user) {
 
         return UserResponseDto.builder()
@@ -176,6 +193,9 @@ public class UserService {
                 .password(user.getPassword())
                 .followersUsername(user.getFollowers().stream().map(User::getUsername).collect(Collectors.toList()))
                 .followingsUsername(user.getFollowings().stream().map(User::getUsername).collect(Collectors.toList()))
+                .tweets(user.getTweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
+                .reTweets(user.getRetweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
+                .likedTweets(user.getLikedTweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
                 .build();
     }
 

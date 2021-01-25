@@ -4,7 +4,6 @@ import ir.ac.sbu.tweeter.dao.UserDao;
 import ir.ac.sbu.tweeter.dto.UserSaveRequestDto;
 import ir.ac.sbu.tweeter.dto.UserSearchDto;
 import ir.ac.sbu.tweeter.dto.UserUpdateRequestDto;
-import ir.ac.sbu.tweeter.entity.Tweet;
 import ir.ac.sbu.tweeter.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +46,11 @@ public class UserManager {
     @Transactional
     public User loadByUsername(String username) {
         User user = userDao.loadByUsername(username);
-        List<User> followers = user.getFollowers();
-        List<User> followings = user.getFollowings();
-        log.info("followers are :{}",followers);
-        log.info("followings are :{}",followings);
+        log.info("followers are :{}",user.getFollowers());
+        log.info("followings are :{}",user.getFollowings());
+        log.info("tweets are :{}",user.getTweets());
+        log.info("reTweets are :{}",user.getRetweets());
+        log.info("liked tweets are :{}",user.getLikedTweets());
         return user;
     }
 
@@ -119,21 +118,6 @@ public class UserManager {
                 .password(password)
                 .build();
     }
-
-//    @Transactional
-//    public List<Tweet> retrieveOriginalTweets(String username){
-//
-//    }
-//
-//    @Transactional
-//    public List<Tweet> retrieveReTweets(String username){
-//
-//    }
-//
-//    @Transactional
-//    public List<Tweet> retrieveLikedTweets(String username){
-//
-//    }
 
 //    @Transactional
 //    public List<Tweet> updatePicture(String username, String Mid){

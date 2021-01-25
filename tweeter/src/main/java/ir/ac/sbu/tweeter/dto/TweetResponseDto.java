@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -18,8 +19,12 @@ public class TweetResponseDto {
     private LocalDateTime time;
     private String uuid;
     private String ownerUsername;
-    private List<String> likedBy;
-    private List<String> retweetedBy;
-    private List<String> hashtags;
-    private List<String> mentions;
+    @Builder.Default
+    private List<String> likedBy = new ArrayList<>();
+    @Builder.Default
+    private List<String> retweetedBy = new ArrayList<>();
+    @Builder.Default
+    private List<String> hashtags = new ArrayList<>();
+    @Builder.Default
+    private List<String> mentions = new ArrayList<>();
 }

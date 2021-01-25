@@ -37,7 +37,12 @@ public class TweetManager {
 
     @Transactional
     public Tweet loadByUUID(String uuid) {
-        return tweetDao.loadByUsername(uuid);
+        Tweet tweet = tweetDao.loadByUsername(uuid);
+        tweet.getRetweetedBy().size();
+        tweet.getMentions().size();
+        tweet.getHashtags().size();
+        tweet.getLikedBy().size();
+        return tweet;
     }
 
     @Transactional
@@ -49,6 +54,9 @@ public class TweetManager {
     @Transactional
     public List<Tweet> search(TweetSearchParamsDto params) {
         List<Tweet> tweets = tweetDao.search(params);
+        for (Tweet tweet : tweets) {
+            log.info("hashtags :{} and mentions :{}",tweet.getHashtags(),tweet.getMentions());
+        }
         log.debug("search method with parameters : {} executed", params);
         return tweets;
     }
@@ -57,8 +65,9 @@ public class TweetManager {
     public void retweet(String tweetUUID, String username) {
         User user = userManager.loadByUsername(username);
         Tweet tweet = loadByUUID(tweetUUID);
-        user.getTweets().add(tweet);
+        user.getRetweets().add(tweet);
         tweet.getRetweetedBy().add(user);
+
     }
 
     @Transactional

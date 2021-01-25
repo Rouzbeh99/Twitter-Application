@@ -40,7 +40,7 @@ public class TweetService {
         Response response;
         try {
             Tweet savedTweet = tweetManager.save(dto);
-            TweetResponseDto responseDto = creatDto(savedTweet);
+            TweetResponseDto responseDto = creatDto(savedTweet,dto.getOwnerUsername());
             response = ok(responseDto).build();
         } catch (UserNotFoundException e) {
             response = Response.status(NOT_FOUND).build();
@@ -74,31 +74,34 @@ public class TweetService {
         List<Tweet> tweetList = tweetManager.search(dto);
         List<TweetResponseDto> tweetResponseDtos = new ArrayList<>();
         for (Tweet tweet : tweetList) {
-            tweetResponseDtos.add(creatDto(tweet));
+            tweetResponseDtos.add(creatDto(tweet,ownerUsername));
         }
         TweetPageDto resultDto = TweetPageDto.builder()
                 .tweets(tweetResponseDtos)
                 .build();
+        log.info("page is :{}",resultDto);
         return Response.ok(resultDto).build();
 
     }
 
-    @PUT
+    @GET
     @Path("like")
     public Response like(@QueryParam("uuid") String tweetUUID,
                          @QueryParam("username") String ownerUsername){
-
+        log.info("method invoked");
         Response response;
         try {
             tweetManager.like(tweetUUID, ownerUsername);
+            log.info("manager finished");
             response = noContent().build();
         } catch (TweetNotFoundException | UserNotFoundException e) {
+            log.info("exception thrown");
             response = status(NOT_FOUND).build();
         }
         return response;
     }
 
-    @PUT
+    @GET
     @Path("retweet")
     public Response retweet(@QueryParam("uuid") String tweetUUID,
                          @QueryParam("username") String ownerUsername){
@@ -113,10 +116,10 @@ public class TweetService {
         return response;
     }
 
-    private TweetResponseDto creatDto(Tweet savedTweet) {
+    private TweetResponseDto creatDto(Tweet savedTweet,String ownerUsername) {
         return TweetResponseDto.builder()
                 .body(savedTweet.getBody())
-                .ownerUsername(savedTweet.getOwner().getUsername())
+                .ownerUsername(ownerUsername)
                 .hashtags(savedTweet.getHashtags())
                 .mentions(savedTweet.getMentions())
                 .time(savedTweet.getTime())

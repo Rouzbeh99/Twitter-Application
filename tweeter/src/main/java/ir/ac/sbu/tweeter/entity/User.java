@@ -47,6 +47,12 @@ public class User {
     @Builder.Default
     private List<Tweet> tweets = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @Builder.Default
+    private List<Tweet> retweets = new ArrayList<>();
+
+
 //    @OneToOne(fetch = FetchType.EAGER, optional = false)
 //    @JoinTable(
 //            name = "WH_USER_MEDIA",

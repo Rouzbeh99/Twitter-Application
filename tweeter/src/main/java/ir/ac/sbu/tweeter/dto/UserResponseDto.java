@@ -20,5 +20,11 @@ public class UserResponseDto {
     private List<String> followersUsername = new ArrayList<>();
     @Builder.Default
     private List<String> followingsUsername = new ArrayList<>();
+    @Builder.Default
+    private List<String> likedTweets = new ArrayList<>();
+    @Builder.Default
+    private List<String> tweets = new ArrayList<>();
+    @Builder.Default
+    private List<String> reTweets = new ArrayList<>();
 
 }

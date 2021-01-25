@@ -21,25 +21,24 @@ public class Tweet {
 
     private String body;
     private LocalDateTime time;
-
-    @Column(unique = true)
     private String uuid;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(unique = true)
+    @ManyToOne()
+    @JoinColumn
     private User owner;
 
-    @ManyToMany(mappedBy = "likedTweets")
+    @ManyToMany(mappedBy = "likedTweets",fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<User> likedBy = new ArrayList<>();
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
     private List<User> retweetedBy = new ArrayList<>();
 
     @ElementCollection
+    @ToString.Exclude
     @CollectionTable(
             name = "HASHTAG",
             joinColumns=@JoinColumn(name = "TWEET_ID")
@@ -48,6 +47,7 @@ public class Tweet {
     private List<String> hashtags = new ArrayList<>();
 
     @ElementCollection
+    @ToString.Exclude
     @CollectionTable(
             name = "Tweet_Mention",
             joinColumns = @JoinColumn(name = "Tweet_ID"))
@@ -55,6 +55,7 @@ public class Tweet {
     private List<String> mentions = new ArrayList<>();
 
     @OneToMany
+    @ToString.Exclude
     @Builder.Default
     private List<Reply> replies = new ArrayList<>();
 
