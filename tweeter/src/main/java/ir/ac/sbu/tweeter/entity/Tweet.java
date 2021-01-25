@@ -41,21 +41,28 @@ public class Tweet {
 
     @ElementCollection
     @CollectionTable(
-            name = "Tweet_Hashtag",
-            joinColumns = @JoinColumn(name = "Tweet_ID"))
-    @Column(name = "Hashtag")
+            name = "HASHTAG",
+            joinColumns=@JoinColumn(name = "TWEET_ID")
+    )
+    @Column(name="hashtag")
     private List<String> hashtags = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(
+            name = "Tweet_Mention",
+            joinColumns = @JoinColumn(name = "Tweet_ID"))
+    @Column(name = "Mention")
+    private List<String> mentions = new ArrayList<>();
+
     @OneToMany
-    @NotEmpty
     @Builder.Default
     private List<Reply> replies = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(
-            name = "WH_TWEET_MEDIA",
-            joinColumns = @JoinColumn(name = "TWEET_ID"),
-            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
-    )
-    private Media media;
+//    @OneToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinTable(
+//            name = "WH_TWEET_MEDIA",
+//            joinColumns = @JoinColumn(name = "TWEET_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
+//    )
+//    private Media media;
 }

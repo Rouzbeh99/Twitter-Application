@@ -1,11 +1,8 @@
 package ir.ac.sbu.tweeter.dao;
 
 import ir.ac.sbu.tweeter.dto.TweetSearchParamsDto;
-import ir.ac.sbu.tweeter.dto.UserSearchDto;
 import ir.ac.sbu.tweeter.entity.Tweet;
-import ir.ac.sbu.tweeter.entity.User;
 import ir.ac.sbu.tweeter.manager.Tweet.TweetNotFoundException;
-import ir.ac.sbu.tweeter.manager.User.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -20,11 +17,12 @@ public class TweetDao {
     @PersistenceContext
     EntityManager entityManager;
 
-    public void save(Tweet tweet) {
+    public Tweet save(Tweet tweet) {
         log.info("going to save tweet to db :{}", tweet);
         entityManager.persist(tweet);
         entityManager.flush();
         log.info("user is saved to database. Id is : {}", tweet.getId());
+        return tweet;
     }
 
     public Tweet loadByUsername(String uuid) {
@@ -55,8 +53,8 @@ public class TweetDao {
     public List<Tweet> search(TweetSearchParamsDto dto) {
         String queryExpression = createSearchQuery(dto);
         TypedQuery<Tweet> query = entityManager.createQuery(queryExpression, Tweet.class);
-        if (StringUtils.hasText(dto.getName())) {
-            query.setParameter("name", dto.getName());
+        if (StringUtils.hasText(dto.getOwnerUsername())) {
+            query.setParameter("ownerUsername", dto.getOwnerUsername());
         }
         if (StringUtils.hasText(dto.getHashtag())) {
             query.setParameter("hashtag", dto.getHashtag());
@@ -65,19 +63,19 @@ public class TweetDao {
     }
 
     private String createSearchQuery(TweetSearchParamsDto params) {
-        String queryExpression = "select t from Tweet t ";
-        queryExpression += addWhereClause(params.getName(), params.getHashtag());
+        String queryExpression = "select t from Tweet t inner join t.hashtags h ";
+        queryExpression += addWhereClause(params.getOwnerUsername(), params.getHashtag());
         return queryExpression;
 
     }
 
-    private String addWhereClause(String name, String hashtag) {
+    private String addWhereClause(String ownerUsername, String hashtag) {
         String result ="where 1=1";
-        if (StringUtils.hasText(name)) {
-            result += " and t.name = :name ";
+        if (StringUtils.hasText(ownerUsername)) {
+            result += " and t.owner.username = :ownerUsername ";
         }
         if (StringUtils.hasText(hashtag)) {
-            result += " and :hashtag  in t.hashtags";
+            result += " and :hashtag = h";
         }
         return result;
     }

@@ -28,9 +28,11 @@ public class TweetManager {
     }
 
     @Transactional
-    public void save(TweetSaveRequestDto saveDto) {
+    public Tweet save(TweetSaveRequestDto saveDto) {
         Tweet tweet = createEntity(saveDto);
-        tweetDao.save(tweet);
+        User user = userManager.loadByUsername(saveDto.getOwnerUsername());
+        user.getTweets().add(tweet);
+        return tweetDao.save(tweet);
     }
 
     @Transactional
@@ -71,6 +73,7 @@ public class TweetManager {
         return Tweet.builder()
                 .body(saveDto.getBody())
                 .hashtags(saveDto.getHashtags())
+                .mentions(saveDto.getMentions())
                 .time(saveDto.getTime())
                 .uuid(UUID.randomUUID().toString())
                 .owner(userManager.loadByUsername(saveDto.getOwnerUsername()))
