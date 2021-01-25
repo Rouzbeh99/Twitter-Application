@@ -47,7 +47,6 @@ public class UserService {
 
     @DELETE
     @Path("{username}")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("username") String username) {
 
         Response response;
@@ -165,6 +164,8 @@ public class UserService {
         }
         return response;
     }
+
+
 
 
     private UserResponseDto createResponseDto(User user) {
