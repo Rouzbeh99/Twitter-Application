@@ -1,7 +1,6 @@
 package ir.ac.sbu.tweeter.service;
 
 import ir.ac.sbu.tweeter.dto.*;
-import ir.ac.sbu.tweeter.entity.Media;
 import ir.ac.sbu.tweeter.entity.Tweet;
 import ir.ac.sbu.tweeter.entity.User;
 import ir.ac.sbu.tweeter.manager.User.UserExistsException;
@@ -46,6 +45,7 @@ public class UserService {
         }
         return response;
     }
+
 
     @DELETE
     @Path("{username}")
@@ -174,7 +174,8 @@ public class UserService {
         try {
             User user = userManager.loadByUsername(username);
             if (user.getName().equals(name) && user.getPassword().equals(password)) {
-                response = ok().build();
+                UserResponseDto responseDto = createResponseDto(user);
+                response = ok(responseDto).build();
             } else {
                 response = status(NOT_FOUND).build();
             }
@@ -190,7 +191,6 @@ public class UserService {
         return UserResponseDto.builder()
                 .name(user.getName())
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .followersUsername(user.getFollowers().stream().map(User::getUsername).collect(Collectors.toList()))
                 .followingsUsername(user.getFollowings().stream().map(User::getUsername).collect(Collectors.toList()))
                 .tweets(user.getTweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))

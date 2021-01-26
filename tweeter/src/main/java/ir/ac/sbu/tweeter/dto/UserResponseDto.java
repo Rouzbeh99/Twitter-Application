@@ -15,7 +15,6 @@ import java.util.List;
 public class UserResponseDto {
     private String name;
     private String username;
-    private String password;
     @Builder.Default
     private List<String> followersUsername = new ArrayList<>();
     @Builder.Default
