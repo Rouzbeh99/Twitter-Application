@@ -102,7 +102,6 @@ public class UserServiceIntegrationTest {
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto dto = response.readEntity(UserResponseDto.class);
         assertThat(dto.getName(), is(equalTo(NAME_2)));
-        assertThat(dto.getPassword(), is(equalTo(PASSWORD_2)));
     }
 
     @Test
@@ -143,7 +142,6 @@ public class UserServiceIntegrationTest {
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto dto = response2.readEntity(UserResponseDto.class);
         assertThat(dto.getName(), is(equalTo(name)));
-        assertThat(dto.getPassword(), is(equalTo(password)));
     }
 
     @Test
@@ -178,7 +176,6 @@ public class UserServiceIntegrationTest {
         assertThat(dto.getUsers().size(), is(equalTo(1)));
         assertThat(dto.getUsers().get(0).getUsername(), is(equalTo(USERNAME_1)));
         assertThat(dto.getUsers().get(0).getName(), is(equalTo(NAME_1)));
-        assertThat(dto.getUsers().get(0).getPassword(), is(equalTo(PASSWORD_1)));
     }
 
     @Test
