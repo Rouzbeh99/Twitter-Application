@@ -95,37 +95,37 @@ public class UserServiceIntegrationTest {
         assertThat(response.getStatus(), is(equalTo(CONFLICT_STATUS_CODE)));
     }
 
-    @Test
-    public void loadByUsernameHappyPath() {
-        saveUser(user2);
-        Response response = webTarget.path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
-        assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
-        UserResponseDto dto = response.readEntity(UserResponseDto.class);
-        assertThat(dto.getName(), is(equalTo(NAME_2)));
-    }
+//    @Test
+//    public void loadByUsernameHappyPath() {
+//        saveUser(user2);
+//        Response response = webTarget.path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+//        assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
+//        UserResponseDto dto = response.readEntity(UserResponseDto.class);
+//        assertThat(dto.getName(), is(equalTo(NAME_2)));
+//    }
 
     @Test
-    public void testRetrieveUsers(){
+    public void testRetrieveUsers() {
         saveUser(user1);
         saveUser(user2);
         UserListDto dto = UserListDto.builder()
                 .usernames(Arrays.asList(USERNAME_1, USERNAME_2))
                 .build();
         Response response = webTarget.path("users").request(MediaType.APPLICATION_JSON).post(Entity.json(dto));
-        assertThat(response.getStatus(),is(equalTo(OK.getStatusCode())));
+        assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         UserPageDto userPageDto = response.readEntity(UserPageDto.class);
-        assertThat(userPageDto.getUsers().size(),is(equalTo(2)));
-        assertThat(userPageDto.getUsers().get(0).getUsername(),is(equalTo(USERNAME_1)));
-        assertThat(userPageDto.getUsers().get(1).getUsername(),is(equalTo(USERNAME_2)));
+        assertThat(userPageDto.getUsers().size(), is(equalTo(2)));
+        assertThat(userPageDto.getUsers().get(0).getUsername(), is(equalTo(USERNAME_1)));
+        assertThat(userPageDto.getUsers().get(1).getUsername(), is(equalTo(USERNAME_2)));
     }
 
-    @Test
-    public void testLoadByCodeWithNonExistentCode() {
-        String randomCode = UUID.randomUUID().toString();
-        webTarget = webTarget.path(randomCode);
-        Response response = webTarget.request(MediaType.APPLICATION_JSON).get();
-        assertThat(response.getStatus(), is(equalTo(NOT_FOUND.getStatusCode())));
-    }
+//    @Test
+//    public void testLoadByCodeWithNonExistentCode() {
+//        String randomCode = UUID.randomUUID().toString();
+//        webTarget = webTarget.path(randomCode);
+//        Response response = webTarget.request(MediaType.APPLICATION_JSON).get();
+//        assertThat(response.getStatus(), is(equalTo(NOT_FOUND.getStatusCode())));
+//    }
 
     @Test
     public void editUserHappyPath() {
@@ -138,7 +138,11 @@ public class UserServiceIntegrationTest {
                 .build();
         Response response = webTarget.path(USERNAME_2).request(MediaType.APPLICATION_JSON).put(Entity.json(updateDto));
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
-        Response response2 = webTarget.path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+        Response response2 = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", password)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto dto = response2.readEntity(UserResponseDto.class);
         assertThat(dto.getName(), is(equalTo(name)));
@@ -212,14 +216,22 @@ public class UserServiceIntegrationTest {
         assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
 
         //get followed
-        Response response = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_1).request(MediaType.APPLICATION_JSON).get();
+        Response response = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_1)
+                .queryParam("password", PASSWORD_1)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto user1_dto = response.readEntity(UserResponseDto.class);
         assertThat(user1_dto.getFollowersUsername().size(), is(equalTo(1)));
         assertThat(user1_dto.getFollowersUsername().get(0), is(equalTo(USERNAME_2)));
 
         //get follower
-        Response response2 = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+        Response response2 = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto user2_dto = response2.readEntity(UserResponseDto.class);
         assertThat(user2_dto.getFollowingsUsername().size(), is(equalTo(1)));
@@ -230,13 +242,21 @@ public class UserServiceIntegrationTest {
         assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
 
         //get UnFollowed
-        response = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_1).request(MediaType.APPLICATION_JSON).get();
+        response = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_1)
+                .queryParam("password", PASSWORD_1)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         user1_dto = response.readEntity(UserResponseDto.class);
         assertThat(user1_dto.getFollowersUsername().size(), is(equalTo(0)));
 
         //get unFollower
-        response2 = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+        response2 = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         user2_dto = response2.readEntity(UserResponseDto.class);
         assertThat(user2_dto.getFollowingsUsername().size(), is(equalTo(0)));

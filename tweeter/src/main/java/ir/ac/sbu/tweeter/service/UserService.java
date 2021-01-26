@@ -172,6 +172,8 @@ public class UserService {
         Response response;
         try {
             User user = userManager.loadByUsername(username);
+            log.info("no problem with username");
+            log.info("password is :{} and expected is :{}",password,user.getPassword());
             if (user.getPassword().equals(password)) {
                 UserResponseDto responseDto = createResponseDto(user);
                 response = ok(responseDto).build();
