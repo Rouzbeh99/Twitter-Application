@@ -47,7 +47,7 @@ public class TweetManagerIntegrationTest {
     @BeforeEach
     public void init() {
         saveUser();
-
+        saveTweet();
     }
 
     @Test
@@ -115,9 +115,9 @@ public class TweetManagerIntegrationTest {
     }
 
     private void saveUser(){
-        UserSaveRequestDto.UserSaveRequestDtoBuilder builder1 = UserSaveRequestDto.builder();
-        userManager.save(builder1.username(USERNAME_1).build());
-        userManager.save(builder1.username(USERNAME_2).build());
+        UserSaveRequestDto.UserSaveRequestDtoBuilder builder = UserSaveRequestDto.builder();
+        userManager.save(builder.username(USERNAME_1).build());
+        userManager.save(builder.username(USERNAME_2).build());
     }
 
     private void saveTweet(){

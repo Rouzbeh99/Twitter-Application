@@ -61,20 +61,20 @@ public class UserService {
         return response;
     }
 
-    @GET
-    @Path("{username}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response loadByUsername(@PathParam("username") String username) {
-        Response response;
-        try {
-            User user = userManager.loadByUsername(username);
-            UserResponseDto dto = createResponseDto(user);
-            response = Response.ok(dto).build();
-        } catch (UserNotFoundException e) {
-            response = status(NOT_FOUND).build();
-        }
-        return response;
-    }
+//    @GET
+//    @Path("{username}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response loadByUsername(@PathParam("username") String username) {
+//        Response response;
+//        try {
+//            User user = userManager.loadByUsername(username);
+//            UserResponseDto dto = createResponseDto(user);
+//            response = Response.ok(dto).build();
+//        } catch (UserNotFoundException e) {
+//            response = status(NOT_FOUND).build();
+//        }
+//        return response;
+//    }
 
     @POST
     @Path("users")
@@ -168,12 +168,11 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response authenticate(@QueryParam("username") String username,
-                                 @QueryParam("name") String name,
                                  @QueryParam("password") String password) {
         Response response;
         try {
             User user = userManager.loadByUsername(username);
-            if (user.getName().equals(name) && user.getPassword().equals(password)) {
+            if (user.getPassword().equals(password)) {
                 UserResponseDto responseDto = createResponseDto(user);
                 response = ok(responseDto).build();
             } else {
