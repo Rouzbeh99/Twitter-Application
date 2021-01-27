@@ -87,7 +87,7 @@ public class TweetDao {
         if(Objects.nonNull(params.getStartDate())){
             result += " and t.time >= :startDate ";
         }
-        if(Objects.nonNull(params.getStartDate())){
+        if(Objects.nonNull(params.getFinishDate())){
             result += " and t.time <= :finishDate ";
         }
         return result;

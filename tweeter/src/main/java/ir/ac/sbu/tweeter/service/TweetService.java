@@ -154,7 +154,7 @@ public class TweetService {
                 .ownerUsername(ownerUsername)
                 .hashtags(savedTweet.getHashtags())
                 .mentions(savedTweet.getMentions())
-//                .time(savedTweet.getTime())
+                .time(savedTweet.getTime().toString())
                 .uuid(savedTweet.getUuid())
                 .likedBy(savedTweet.getLikedBy().stream().map(User::getUsername).collect(Collectors.toList()))
                 .retweetedBy(savedTweet.getRetweetedBy().stream().map(User::getUsername).collect(Collectors.toList()))

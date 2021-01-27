@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,11 +96,12 @@ public class TweetManager {
     }
 
     private Tweet createEntity(TweetSaveRequestDto saveDto) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return Tweet.builder()
                 .body(saveDto.getBody())
                 .hashtags(saveDto.getHashtags())
                 .mentions(saveDto.getMentions())
-//                .time(saveDto.getTime())
+                .time(LocalDateTime.parse(saveDto.getTime(), formatter))
                 .uuid(UUID.randomUUID().toString())
                 .owner(userManager.loadByUsername(saveDto.getOwnerUsername()))
                 .build();

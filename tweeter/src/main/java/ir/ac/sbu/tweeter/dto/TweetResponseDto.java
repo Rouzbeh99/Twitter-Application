@@ -17,8 +17,7 @@ import java.util.List;
 public class TweetResponseDto {
 
     private String body;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime time;
+    private String time;
     private String uuid;
     private String ownerUsername;
     @Builder.Default

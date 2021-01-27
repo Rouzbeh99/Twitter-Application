@@ -19,8 +19,7 @@ public class TweetSaveRequestDto {
     private String body;
     private String OwnerUsername;
     private List<String> hashtags;
-//    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-//    private LocalDateTime time;
+    private String time;
     private List<String> mentions;
 
 }

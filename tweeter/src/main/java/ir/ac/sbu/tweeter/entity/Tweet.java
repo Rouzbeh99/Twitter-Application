@@ -3,7 +3,6 @@ package ir.ac.sbu.tweeter.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,8 @@ public class Tweet {
 
     private String body;
 
-//    @Column(columnDefinition = "TIMESTAMP")
-//    private LocalDateTime time;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime time;
 
     @EqualsAndHashCode.Include
     private String uuid;

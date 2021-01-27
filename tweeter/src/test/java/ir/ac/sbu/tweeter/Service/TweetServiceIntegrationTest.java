@@ -64,14 +64,14 @@ public class TweetServiceIntegrationTest {
                 .OwnerUsername(USERNAME_1)
                 .hashtags(Collections.singletonList(HASHTAG_1))
                 .mentions(Collections.singletonList(MENTION_1))
-//                .time(LocalDateTime.of(2020,12,30,23,59,59))
+                .time("2020-12-30 23:59:59")
                 .build();
         saveRequestDto2 = TweetSaveRequestDto.builder()
                 .body(BODY_2)
                 .OwnerUsername(USERNAME_2)
                 .hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2))
                 .mentions(Arrays.asList(MENTION_1, MENTION_2))
-//                .time(LocalDateTime.of(2020,12,30,23,59,0))
+                .time("2020-12-30 23:00:00")
                 .build();
 
         user1 = UserSaveRequestDto.builder()
@@ -116,9 +116,9 @@ public class TweetServiceIntegrationTest {
     }
 
     @Test
-    public void testSearchByData() {
-        saveTweet(saveRequestDto1);
-        saveTweet(saveRequestDto2);
+    public void testSearchByDate() {
+        UUID_1 = saveTweet(saveRequestDto1);
+        UUID_2 = saveTweet(saveRequestDto2);
         Response response = webTarget
                 .queryParam("startDate","2020-12-30 23:01:00")
                 .request(MediaType.APPLICATION_JSON)
@@ -126,8 +126,8 @@ public class TweetServiceIntegrationTest {
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         TweetPageDto dto = response.readEntity(TweetPageDto.class);
         assertThat(dto.getTweets().size(), is(equalTo(1)));
-        assertThat(dto.getTweets().get(0).getUuid(), is(equalTo(UUID_2)));
-        assertThat(dto.getTweets().get(0).getBody(), is(equalTo(BODY_2)));
+        assertThat(dto.getTweets().get(0).getUuid(), is(equalTo(UUID_1)));
+        assertThat(dto.getTweets().get(0).getBody(), is(equalTo(BODY_1)));
 
     }
 
