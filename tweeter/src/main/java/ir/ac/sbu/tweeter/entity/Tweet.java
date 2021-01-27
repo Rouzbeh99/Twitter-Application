@@ -20,7 +20,8 @@ public class Tweet {
     private long id;
 
     private String body;
-    private LocalDateTime time;
+//    private LocalDateTime time;
+    @EqualsAndHashCode.Include
     private String uuid;
 
     @ManyToOne()
@@ -58,6 +59,7 @@ public class Tweet {
     @ToString.Exclude
     @Builder.Default
     private List<Reply> replies = new ArrayList<>();
+
 
 //    @OneToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinTable(

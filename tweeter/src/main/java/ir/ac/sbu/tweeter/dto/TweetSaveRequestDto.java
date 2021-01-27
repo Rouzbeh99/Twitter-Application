@@ -17,7 +17,7 @@ public class TweetSaveRequestDto {
     private String body;
     private String OwnerUsername;
     private List<String> hashtags;
-    private LocalDateTime time;
+//    private LocalDateTime time;
     private List<String> mentions;
 
 }

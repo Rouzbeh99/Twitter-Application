@@ -50,7 +50,14 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @Builder.Default
+    private List<Tweet> timeline = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @Builder.Default
     private List<Tweet> retweets = new ArrayList<>();
+
+
 
 
 //    @OneToOne(fetch = FetchType.EAGER, optional = false)

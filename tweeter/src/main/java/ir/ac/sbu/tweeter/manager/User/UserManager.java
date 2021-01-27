@@ -4,6 +4,7 @@ import ir.ac.sbu.tweeter.dao.UserDao;
 import ir.ac.sbu.tweeter.dto.UserSaveRequestDto;
 import ir.ac.sbu.tweeter.dto.UserSearchDto;
 import ir.ac.sbu.tweeter.dto.UserUpdateRequestDto;
+import ir.ac.sbu.tweeter.entity.Tweet;
 import ir.ac.sbu.tweeter.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,12 @@ public class UserManager {
     @Transactional
     public User loadByUsername(String username) {
         User user = userDao.loadByUsername(username);
-        log.info("followers are :{}",user.getFollowers());
-        log.info("followings are :{}",user.getFollowings());
-        log.info("tweets are :{}",user.getTweets());
-        log.info("reTweets are :{}",user.getRetweets());
-        log.info("liked tweets are :{}",user.getLikedTweets());
+        log.info("followers are :{}", user.getFollowers());
+        log.info("followings are :{}", user.getFollowings());
+        log.info("tweets are :{}", user.getTweets());
+        log.info("reTweets are :{}", user.getRetweets());
+        log.info("liked tweets are :{}", user.getLikedTweets());
+        log.info("timeline tweets are :{}", user.getTimeline());
         return user;
     }
 
@@ -85,6 +87,12 @@ public class UserManager {
     }
 
     @Transactional
+    public void addToTimeline(User user, Tweet tweet) {
+
+        user.getTimeline().add(tweet);
+    }
+
+    @Transactional
     public void follow(String followedUsername, String followerUsername) {
         User followed = loadByUsername(followedUsername);
         User follower = loadByUsername(followerUsername);
@@ -92,18 +100,33 @@ public class UserManager {
         follower.getFollowings().add(followed);
         log.info("followed is :{}", followed);
         log.info("follower is :{}", follower);
+        for (Tweet tweet : followed.getTweets()) {
+            addToTimeline(follower, tweet);
+        }
+        for (Tweet tweet : followed.getRetweets()) {
+            addToTimeline(follower, tweet);
+        }
+        log.info("after follow, follower timeline is :{}", follower.getTimeline());
         userDao.update(followed);
+        log.info("followed user saved successfully");
         userDao.update(follower);
+        log.info("follower user saved successfully");
     }
 
     @Transactional
     public void unFollow(String followedUsername, String followerUsername) {
-        User followed = loadByUsername(followedUsername);
-        User follower = loadByUsername(followerUsername);
-        followed.getFollowers().remove(follower);
-        follower.getFollowings().remove(followed);
-        userDao.update(followed);
-        userDao.update(follower);
+        User unFollowed = loadByUsername(followedUsername);
+        User unFollower = loadByUsername(followerUsername);
+        for (Tweet tweet : unFollowed.getTweets()) {
+            unFollower.getTimeline().remove(tweet);
+        }
+        for (Tweet tweet : unFollowed.getRetweets()) {
+            unFollower.getTimeline().remove(tweet);
+        }
+        unFollowed.getFollowers().remove(unFollower);
+        unFollower.getFollowings().remove(unFollowed);
+        userDao.update(unFollowed);
+        userDao.update(unFollower);
     }
 
 

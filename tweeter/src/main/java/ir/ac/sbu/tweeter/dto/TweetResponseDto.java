@@ -16,7 +16,7 @@ import java.util.List;
 public class TweetResponseDto {
 
     private String body;
-    private LocalDateTime time;
+//    private LocalDateTime time;
     private String uuid;
     private String ownerUsername;
     @Builder.Default

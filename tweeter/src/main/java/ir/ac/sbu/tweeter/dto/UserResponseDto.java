@@ -25,5 +25,7 @@ public class UserResponseDto {
     private List<String> tweets = new ArrayList<>();
     @Builder.Default
     private List<String> reTweets = new ArrayList<>();
+    @Builder.Default
+    private List<String> timeline = new ArrayList<>();
 
 }

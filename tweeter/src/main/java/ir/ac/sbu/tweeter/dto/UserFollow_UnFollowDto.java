@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserFollow_UnFollowDto {
     private String followedUsername;
-    private String followingUsername;
+    private String followerUsername;
 }

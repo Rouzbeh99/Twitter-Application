@@ -19,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -209,7 +208,7 @@ public class UserServiceIntegrationTest {
         saveUser(user2);
         UserFollow_UnFollowDto dto = UserFollow_UnFollowDto.builder()
                 .followedUsername(USERNAME_1)
-                .followingUsername(USERNAME_2)
+                .followerUsername(USERNAME_2)
                 .build();
         //follow
         Response response1 = webTarget.path("follow").request(MediaType.APPLICATION_JSON).put(Entity.json(dto));
@@ -261,7 +260,6 @@ public class UserServiceIntegrationTest {
         user2_dto = response2.readEntity(UserResponseDto.class);
         assertThat(user2_dto.getFollowingsUsername().size(), is(equalTo(0)));
     }
-
 
     private Response saveUser(UserSaveRequestDto dto) {
         return webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(dto));

@@ -66,7 +66,7 @@ public class TweetServiceIntegrationTest {
                 .build();
         saveRequestDto2 = TweetSaveRequestDto.builder()
                 .body(BODY_2)
-                .OwnerUsername(USERNAME_1)
+                .OwnerUsername(USERNAME_2)
                 .hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2))
                 .mentions(Arrays.asList(MENTION_1, MENTION_2))
                 .build();
@@ -118,8 +118,11 @@ public class TweetServiceIntegrationTest {
                 .queryParam("username", USERNAME_2)
                 .request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus(), is(equalTo(NO_CONTENT.getStatusCode())));
-
-        Response response1 = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+        Response response1 = client.target("http://localhost:" + port)
+                .path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON).get();
         assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto userDto = response1.readEntity(UserResponseDto.class);
         assertThat(userDto.getLikedTweets().size(), is(equalTo(1)));
@@ -142,13 +145,61 @@ public class TweetServiceIntegrationTest {
                 .request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus(), is(equalTo(NO_CONTENT.getStatusCode())));
 
-        Response response1 = client.target("http://localhost:" + port).path("/tweeter/user").path(USERNAME_2).request(MediaType.APPLICATION_JSON).get();
+        Response response1 = client.target("http://localhost:" + port)
+                .path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON).get();
         assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto userDto = response1.readEntity(UserResponseDto.class);
         assertThat(userDto.getReTweets().size(), is(equalTo(2)));
         assertThat(userDto.getReTweets().get(0), is(equalTo(UUID_1)));
         assertThat(userDto.getReTweets().get(1), is(equalTo(UUID_2)));
 
+    }
+
+    @Test
+    public void testTimeline(){
+
+        UUID_1 = saveTweet(saveRequestDto1);
+        UUID_2 = saveTweet(saveRequestDto2);
+        UserFollow_UnFollowDto dto = UserFollow_UnFollowDto.builder()
+                .followedUsername(USERNAME_1)
+                .followerUsername(USERNAME_2)
+                .build();
+
+        //follow
+        Response response1 = client.target("http://localhost:" + port).path("/tweeter/user").path("follow").request(MediaType.APPLICATION_JSON).put(Entity.json(dto));
+        assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
+
+        //get follower
+        Response response2 = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
+        UserResponseDto followerDto = response2.readEntity(UserResponseDto.class);
+        assertThat(followerDto.getTimeline().size(),is(equalTo(2)));
+        assertThat(Arrays.asList(UUID_1,UUID_2).contains(followerDto.getTimeline().get(0)),is(equalTo(true)));
+        assertThat(Arrays.asList(UUID_1,UUID_2).contains(followerDto.getTimeline().get(1)),is(equalTo(true)));
+
+        //unFollow
+        response1 = client.target("http://localhost:" + port).path("/tweeter/user").path("unFollow").request(MediaType.APPLICATION_JSON).put(Entity.json(dto));
+        assertThat(response1.getStatus(), is(equalTo(OK.getStatusCode())));
+
+
+        //get unFollower
+        response2 = client.target("http://localhost:" + port).path("/tweeter/user").path("authenticate")
+                .queryParam("username", USERNAME_2)
+                .queryParam("password", PASSWORD_2)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
+        UserResponseDto unFollower = response2.readEntity(UserResponseDto.class);
+        assertThat(unFollower.getFollowingsUsername().size(), is(equalTo(0)));
+        assertThat(unFollower.getTimeline().size(),is(equalTo(1)));
+        assertThat(unFollower.getTimeline().get(0),is(equalTo(UUID_2)));
     }
 
     public String saveTweet(TweetSaveRequestDto dto) {

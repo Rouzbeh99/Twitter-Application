@@ -140,7 +140,7 @@ public class UserService {
     public Response follow(UserFollow_UnFollowDto dto) {
         Response response;
         try {
-            userManager.follow(dto.getFollowedUsername(), dto.getFollowingUsername());
+            userManager.follow(dto.getFollowedUsername(), dto.getFollowerUsername());
             response = ok().build();
         } catch (UserNotFoundException e) {
             response = status(NOT_FOUND).build();
@@ -155,7 +155,7 @@ public class UserService {
     public Response unFollow(UserFollow_UnFollowDto dto) {
         Response response;
         try {
-            userManager.unFollow(dto.getFollowedUsername(), dto.getFollowingUsername());
+            userManager.unFollow(dto.getFollowedUsername(), dto.getFollowerUsername());
             response = ok().build();
         } catch (UserNotFoundException e) {
             response = status(NOT_FOUND).build();
@@ -197,6 +197,7 @@ public class UserService {
                 .tweets(user.getTweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
                 .reTweets(user.getRetweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
                 .likedTweets(user.getLikedTweets().stream().map(Tweet::getUuid).collect(Collectors.toList()))
+                .timeline(user.getTimeline().stream().map(Tweet::getUuid).collect(Collectors.toList()))
                 .build();
     }
 

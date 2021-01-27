@@ -48,6 +48,21 @@ public class TweetService {
         return response;
     }
 
+    @GET
+    @Path("{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadByUsername(@PathParam("uuid") String uuid) {
+        Response response;
+        try {
+            Tweet tweet = tweetManager.loadByUUID(uuid);
+            TweetResponseDto dto = creatDto(tweet, tweet.getOwner().getUsername());
+            response = Response.ok(dto).build();
+        } catch (UserNotFoundException e) {
+            response = status(NOT_FOUND).build();
+        }
+        return response;
+    }
+
 
     @DELETE
     @Path("{uuid}")
@@ -122,7 +137,7 @@ public class TweetService {
                 .ownerUsername(ownerUsername)
                 .hashtags(savedTweet.getHashtags())
                 .mentions(savedTweet.getMentions())
-                .time(savedTweet.getTime())
+//                .time(savedTweet.getTime())
                 .uuid(savedTweet.getUuid())
                 .likedBy(savedTweet.getLikedBy().stream().map(User::getUsername).collect(Collectors.toList()))
                 .retweetedBy(savedTweet.getRetweetedBy().stream().map(User::getUsername).collect(Collectors.toList()))

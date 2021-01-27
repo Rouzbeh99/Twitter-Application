@@ -32,6 +32,14 @@ public class TweetManager {
         Tweet tweet = createEntity(saveDto);
         User user = userManager.loadByUsername(saveDto.getOwnerUsername());
         user.getTweets().add(tweet);
+        if(!user.getTimeline().contains(tweet)) {
+            user.getTimeline().add(tweet);
+        }
+        for (User user1 : user.getFollowers()) {
+            if(!user1.getTimeline().contains(tweet)) {
+                user1.getTimeline().add(tweet);
+            }
+        }
         return tweetDao.save(tweet);
     }
 
@@ -67,7 +75,14 @@ public class TweetManager {
         Tweet tweet = loadByUUID(tweetUUID);
         user.getRetweets().add(tweet);
         tweet.getRetweetedBy().add(user);
-
+        if(!user.getTimeline().contains(tweet)) {
+            user.getTimeline().add(tweet);
+        }
+        for (User user1 : user.getFollowers()) {
+            if(!user1.getTimeline().contains(tweet)) {
+                user1.getTimeline().add(tweet);
+            }
+        }
     }
 
     @Transactional
@@ -83,7 +98,7 @@ public class TweetManager {
                 .body(saveDto.getBody())
                 .hashtags(saveDto.getHashtags())
                 .mentions(saveDto.getMentions())
-                .time(saveDto.getTime())
+//                .time(saveDto.getTime())
                 .uuid(UUID.randomUUID().toString())
                 .owner(userManager.loadByUsername(saveDto.getOwnerUsername()))
                 .build();
