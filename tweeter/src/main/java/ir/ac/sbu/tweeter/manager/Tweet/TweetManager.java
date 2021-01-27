@@ -13,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -37,11 +35,13 @@ public class TweetManager {
         user.getTweets().add(tweet);
         if(!user.getTimeline().contains(tweet)) {
             user.getTimeline().add(tweet);
+            Collections.sort(user.getTimeline());
         }
         for (User user1 : user.getFollowers()) {
             if(!user1.getTimeline().contains(tweet)) {
                 user1.getTimeline().add(tweet);
             }
+            Collections.sort(user1.getTimeline());
         }
         return tweetDao.save(tweet);
     }
@@ -80,11 +80,13 @@ public class TweetManager {
         tweet.getRetweetedBy().add(user);
         if(!user.getTimeline().contains(tweet)) {
             user.getTimeline().add(tweet);
+            Collections.sort(user.getTimeline());
         }
         for (User user1 : user.getFollowers()) {
             if(!user1.getTimeline().contains(tweet)) {
                 user1.getTimeline().add(tweet);
             }
+            Collections.sort(user1.getTimeline());
         }
     }
 

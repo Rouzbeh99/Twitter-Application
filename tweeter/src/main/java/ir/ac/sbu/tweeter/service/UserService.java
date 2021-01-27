@@ -131,7 +131,6 @@ public class UserService {
                 .users(userResponseDtos)
                 .build();
         return Response.ok(resultDto).build();
-
     }
 
     @PUT

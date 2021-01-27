@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -88,8 +89,8 @@ public class UserManager {
 
     @Transactional
     public void addToTimeline(User user, Tweet tweet) {
-
         user.getTimeline().add(tweet);
+        Collections.sort(user.getTimeline());
     }
 
     @Transactional

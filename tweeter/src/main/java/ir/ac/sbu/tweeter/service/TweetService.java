@@ -15,6 +15,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -53,10 +54,11 @@ public class TweetService {
         return response;
     }
 
+
     @GET
     @Path("{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loadByUsername(@PathParam("uuid") String uuid) {
+    public Response loadByUUID(@PathParam("uuid") String uuid) {
         Response response;
         try {
             Tweet tweet = tweetManager.loadByUUID(uuid);
@@ -137,7 +139,6 @@ public class TweetService {
     @Path("retweet")
     public Response retweet(@QueryParam("uuid") String tweetUUID,
                          @QueryParam("username") String ownerUsername){
-
         Response response;
         try {
             tweetManager.retweet(tweetUUID, ownerUsername);
@@ -147,6 +148,7 @@ public class TweetService {
         }
         return response;
     }
+
 
     private TweetResponseDto creatDto(Tweet savedTweet,String ownerUsername) {
         TweetResponseDto tweet = TweetResponseDto.builder()

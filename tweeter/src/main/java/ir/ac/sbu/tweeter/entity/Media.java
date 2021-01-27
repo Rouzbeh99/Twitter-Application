@@ -17,9 +17,9 @@ public class Media {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String value;
+    private byte[] value;
 
     @Column(unique = true)
     private String uuid;
-    // enum for content
+
 }

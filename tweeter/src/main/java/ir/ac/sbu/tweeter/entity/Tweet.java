@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "TW_TWEET")
 @AllArgsConstructor
-public class Tweet {
+public class Tweet implements Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -21,6 +21,7 @@ public class Tweet {
     private String body;
 
     @Column(columnDefinition = "TIMESTAMP")
+    @EqualsAndHashCode.Include
     private LocalDateTime time;
 
     @EqualsAndHashCode.Include
@@ -63,11 +64,16 @@ public class Tweet {
     private List<Reply> replies = new ArrayList<>();
 
 
-//    @OneToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinTable(
-//            name = "WH_TWEET_MEDIA",
-//            joinColumns = @JoinColumn(name = "TWEET_ID"),
-//            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
-//    )
-//    private Media media;
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinTable(
+            name = "WH_TWEET_MEDIA",
+            joinColumns = @JoinColumn(name = "TWEET_ID"),
+            inverseJoinColumns = @JoinColumn(name = "MEDIA_ID")
+    )
+    private Media media;
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getTime().compareTo(((Tweet) o).getTime());
+    }
 }
