@@ -16,6 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -63,12 +64,14 @@ public class TweetServiceIntegrationTest {
                 .OwnerUsername(USERNAME_1)
                 .hashtags(Collections.singletonList(HASHTAG_1))
                 .mentions(Collections.singletonList(MENTION_1))
+//                .time(LocalDateTime.of(2020,12,30,23,59,59))
                 .build();
         saveRequestDto2 = TweetSaveRequestDto.builder()
                 .body(BODY_2)
                 .OwnerUsername(USERNAME_2)
                 .hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2))
                 .mentions(Arrays.asList(MENTION_1, MENTION_2))
+//                .time(LocalDateTime.of(2020,12,30,23,59,0))
                 .build();
 
         user1 = UserSaveRequestDto.builder()
@@ -99,13 +102,32 @@ public class TweetServiceIntegrationTest {
     public void testSearchByHashtag() {
         saveTweet(saveRequestDto1);
         saveTweet(saveRequestDto2);
-        Response response = webTarget.queryParam("hashtag", HASHTAG_1).request(MediaType.APPLICATION_JSON).get();
+        Response response = webTarget
+                .queryParam("hashtag",HASHTAG_1)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
         assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         TweetPageDto dto = response.readEntity(TweetPageDto.class);
         assertThat(dto.getTweets().size(), is(equalTo(2)));
         assertThat(dto.getTweets().get(0).getBody(), is(equalTo(BODY_1)));
         assertThat(dto.getTweets().get(0).getHashtags().get(0), is(equalTo(HASHTAG_1)));
         assertThat(dto.getTweets().get(1).getBody(), is(equalTo(BODY_2)));
+
+    }
+
+    @Test
+    public void testSearchByData() {
+        saveTweet(saveRequestDto1);
+        saveTweet(saveRequestDto2);
+        Response response = webTarget
+                .queryParam("startDate","2020-12-30 23:01:00")
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
+        TweetPageDto dto = response.readEntity(TweetPageDto.class);
+        assertThat(dto.getTweets().size(), is(equalTo(1)));
+        assertThat(dto.getTweets().get(0).getUuid(), is(equalTo(UUID_2)));
+        assertThat(dto.getTweets().get(0).getBody(), is(equalTo(BODY_2)));
 
     }
 
@@ -159,7 +181,7 @@ public class TweetServiceIntegrationTest {
     }
 
     @Test
-    public void testTimeline(){
+    public void testTimeline() {
 
         UUID_1 = saveTweet(saveRequestDto1);
         UUID_2 = saveTweet(saveRequestDto2);
@@ -180,9 +202,9 @@ public class TweetServiceIntegrationTest {
                 .get();
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto followerDto = response2.readEntity(UserResponseDto.class);
-        assertThat(followerDto.getTimeline().size(),is(equalTo(2)));
-        assertThat(Arrays.asList(UUID_1,UUID_2).contains(followerDto.getTimeline().get(0)),is(equalTo(true)));
-        assertThat(Arrays.asList(UUID_1,UUID_2).contains(followerDto.getTimeline().get(1)),is(equalTo(true)));
+        assertThat(followerDto.getTimeline().size(), is(equalTo(2)));
+        assertThat(Arrays.asList(UUID_1, UUID_2).contains(followerDto.getTimeline().get(0)), is(equalTo(true)));
+        assertThat(Arrays.asList(UUID_1, UUID_2).contains(followerDto.getTimeline().get(1)), is(equalTo(true)));
 
         //unFollow
         response1 = client.target("http://localhost:" + port).path("/tweeter/user").path("unFollow").request(MediaType.APPLICATION_JSON).put(Entity.json(dto));
@@ -198,20 +220,20 @@ public class TweetServiceIntegrationTest {
         assertThat(response2.getStatus(), is(equalTo(OK.getStatusCode())));
         UserResponseDto unFollower = response2.readEntity(UserResponseDto.class);
         assertThat(unFollower.getFollowingsUsername().size(), is(equalTo(0)));
-        assertThat(unFollower.getTimeline().size(),is(equalTo(1)));
-        assertThat(unFollower.getTimeline().get(0),is(equalTo(UUID_2)));
+        assertThat(unFollower.getTimeline().size(), is(equalTo(1)));
+        assertThat(unFollower.getTimeline().get(0), is(equalTo(UUID_2)));
     }
 
     public String saveTweet(TweetSaveRequestDto dto) {
         saveUser(user1);
         saveUser(user2);
         Response response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(dto));
-        assertThat(response.getStatus(),is(equalTo(OK.getStatusCode())));
+        assertThat(response.getStatus(), is(equalTo(OK.getStatusCode())));
         return response.readEntity(TweetResponseDto.class).getUuid();
     }
 
     private void saveUser(UserSaveRequestDto dto) {
-         client.target("http://localhost:" + port).path("/tweeter/user")
+        client.target("http://localhost:" + port).path("/tweeter/user")
                 .request(MediaType.APPLICATION_JSON).post(Entity.json(dto));
     }
 

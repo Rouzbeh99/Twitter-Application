@@ -20,7 +20,10 @@ public class Tweet {
     private long id;
 
     private String body;
+
+//    @Column(columnDefinition = "TIMESTAMP")
 //    private LocalDateTime time;
+
     @EqualsAndHashCode.Include
     private String uuid;
 

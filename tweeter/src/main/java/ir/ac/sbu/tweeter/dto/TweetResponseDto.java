@@ -1,5 +1,6 @@
 package ir.ac.sbu.tweeter.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,8 @@ import java.util.List;
 public class TweetResponseDto {
 
     private String body;
-//    private LocalDateTime time;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime time;
     private String uuid;
     private String ownerUsername;
     @Builder.Default

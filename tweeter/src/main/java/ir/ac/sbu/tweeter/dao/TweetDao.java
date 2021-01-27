@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -59,23 +60,35 @@ public class TweetDao {
         if (StringUtils.hasText(dto.getHashtag())) {
             query.setParameter("hashtag", dto.getHashtag());
         }
+        if(Objects.nonNull(dto.getStartDate())){
+            query.setParameter("startDate", dto.getStartDate());
+        }
+        if(Objects.nonNull(dto.getFinishDate())){
+            query.setParameter("finishDate", dto.getFinishDate());
+        }
         return query.getResultList();
     }
 
     private String createSearchQuery(TweetSearchParamsDto params) {
         String queryExpression = "select t from Tweet t inner join t.hashtags h ";
-        queryExpression += addWhereClause(params.getOwnerUsername(), params.getHashtag());
+        queryExpression += addWhereClause(params);
         return queryExpression;
 
     }
 
-    private String addWhereClause(String ownerUsername, String hashtag) {
+    private String addWhereClause(TweetSearchParamsDto params) {
         String result ="where 1=1";
-        if (StringUtils.hasText(ownerUsername)) {
+        if (StringUtils.hasText(params.getOwnerUsername())) {
             result += " and t.owner.username = :ownerUsername ";
         }
-        if (StringUtils.hasText(hashtag)) {
+        if (StringUtils.hasText(params.getHashtag())) {
             result += " and :hashtag = h";
+        }
+        if(Objects.nonNull(params.getStartDate())){
+            result += " and t.time >= :startDate ";
+        }
+        if(Objects.nonNull(params.getStartDate())){
+            result += " and t.time <= :finishDate ";
         }
         return result;
     }

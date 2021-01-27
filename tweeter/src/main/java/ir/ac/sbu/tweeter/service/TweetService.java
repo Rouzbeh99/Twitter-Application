@@ -9,13 +9,17 @@ import ir.ac.sbu.tweeter.manager.User.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.Response.*;
@@ -38,6 +42,7 @@ public class TweetService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addTweet(TweetSaveRequestDto dto) {
         Response response;
+        log.info("save dto is :{}",dto);
         try {
             Tweet savedTweet = tweetManager.save(dto);
             TweetResponseDto responseDto = creatDto(savedTweet,dto.getOwnerUsername());
@@ -81,15 +86,27 @@ public class TweetService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response search(@QueryParam("username") String ownerUsername,
-                           @QueryParam("hashtag") String hashtag) {
+                           @QueryParam("hashtag") String hashtag,
+                           @QueryParam("startDate") String startDate,
+                           @QueryParam("finishDate") String finishDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         TweetSearchParamsDto dto = TweetSearchParamsDto.builder()
                 .ownerUsername(ownerUsername)
                 .hashtag(hashtag)
                 .build();
+        if (StringUtils.hasText(startDate)){
+            dto.setStartDate(LocalDateTime.parse(startDate, formatter));
+        }
+        if (StringUtils.hasText(finishDate)){
+            dto.setFinishDate(LocalDateTime.parse(finishDate, formatter));
+        }
+        log.info("search params dto is :{}", dto);
+
         List<Tweet> tweetList = tweetManager.search(dto);
         List<TweetResponseDto> tweetResponseDtos = new ArrayList<>();
         for (Tweet tweet : tweetList) {
-            tweetResponseDtos.add(creatDto(tweet,ownerUsername));
+            tweetResponseDtos.add(creatDto(tweet,dto.getOwnerUsername()));
         }
         TweetPageDto resultDto = TweetPageDto.builder()
                 .tweets(tweetResponseDtos)
