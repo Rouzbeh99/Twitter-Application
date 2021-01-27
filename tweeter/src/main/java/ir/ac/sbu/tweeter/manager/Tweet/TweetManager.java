@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -97,14 +98,17 @@ public class TweetManager {
 
     private Tweet createEntity(TweetSaveRequestDto saveDto) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return Tweet.builder()
+        Tweet tweet = Tweet.builder()
                 .body(saveDto.getBody())
                 .hashtags(saveDto.getHashtags())
                 .mentions(saveDto.getMentions())
-                .time(LocalDateTime.parse(saveDto.getTime(), formatter))
                 .uuid(UUID.randomUUID().toString())
                 .owner(userManager.loadByUsername(saveDto.getOwnerUsername()))
                 .build();
+        if(Objects.nonNull(saveDto.getTime())){
+            tweet.setTime(LocalDateTime.parse(saveDto.getTime(),formatter));
+        }
+        return tweet;
     }
 
 }

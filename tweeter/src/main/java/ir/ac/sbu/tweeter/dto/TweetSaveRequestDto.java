@@ -17,7 +17,7 @@ import java.util.List;
 public class TweetSaveRequestDto {
 
     private String body;
-    private String OwnerUsername;
+    private String ownerUsername;
     private List<String> hashtags;
     private String time;
     private List<String> mentions;

@@ -149,16 +149,19 @@ public class TweetService {
     }
 
     private TweetResponseDto creatDto(Tweet savedTweet,String ownerUsername) {
-        return TweetResponseDto.builder()
+        TweetResponseDto tweet = TweetResponseDto.builder()
                 .body(savedTweet.getBody())
                 .ownerUsername(ownerUsername)
                 .hashtags(savedTweet.getHashtags())
                 .mentions(savedTweet.getMentions())
-                .time(savedTweet.getTime().toString())
                 .uuid(savedTweet.getUuid())
                 .likedBy(savedTweet.getLikedBy().stream().map(User::getUsername).collect(Collectors.toList()))
                 .retweetedBy(savedTweet.getRetweetedBy().stream().map(User::getUsername).collect(Collectors.toList()))
                 .build();
+        if(Objects.nonNull(savedTweet.getTime())){
+            tweet.setTime(savedTweet.getTime().toString());
+        }
+        return tweet;
     }
 
 }

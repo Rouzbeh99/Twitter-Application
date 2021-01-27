@@ -16,7 +16,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -61,14 +60,14 @@ public class TweetServiceIntegrationTest {
         client = ClientBuilder.newClient();
         saveRequestDto1 = TweetSaveRequestDto.builder()
                 .body(BODY_1)
-                .OwnerUsername(USERNAME_1)
+                .ownerUsername(USERNAME_1)
                 .hashtags(Collections.singletonList(HASHTAG_1))
                 .mentions(Collections.singletonList(MENTION_1))
                 .time("2020-12-30 23:59:59")
                 .build();
         saveRequestDto2 = TweetSaveRequestDto.builder()
                 .body(BODY_2)
-                .OwnerUsername(USERNAME_2)
+                .ownerUsername(USERNAME_2)
                 .hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2))
                 .mentions(Arrays.asList(MENTION_1, MENTION_2))
                 .time("2020-12-30 23:00:00")

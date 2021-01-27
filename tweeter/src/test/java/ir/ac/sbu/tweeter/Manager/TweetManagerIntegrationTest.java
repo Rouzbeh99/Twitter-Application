@@ -122,8 +122,8 @@ public class TweetManagerIntegrationTest {
 
     private void saveTweet(){
         TweetSaveRequestDto.TweetSaveRequestDtoBuilder builder = TweetSaveRequestDto.builder();
-        UUID_1 = tweetManager.save(builder.body(BODY_1).hashtags(Collections.singletonList(HASHTAG_1)).mentions(Collections.singletonList(MENTION_1)).OwnerUsername(USERNAME_1).build()).getUuid();
-        UUID_2 = tweetManager.save(builder.body(BODY_2).hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2)).mentions(Arrays.asList(MENTION_1, MENTION_2)).OwnerUsername(USERNAME_2).build()).getUuid();
+        UUID_1 = tweetManager.save(builder.body(BODY_1).hashtags(Collections.singletonList(HASHTAG_1)).mentions(Collections.singletonList(MENTION_1)).ownerUsername(USERNAME_1).build()).getUuid();
+        UUID_2 = tweetManager.save(builder.body(BODY_2).hashtags(Arrays.asList(HASHTAG_1, HASHTAG_2)).mentions(Arrays.asList(MENTION_1, MENTION_2)).ownerUsername(USERNAME_2).build()).getUuid();
     }
 
 

@@ -39,6 +39,7 @@ public class UserService {
         Response response;
         try {
             userManager.save(dto);
+            log.info("user :{} added", dto);
             response = ok().build();
         } catch (UserExistsException e) {
             response = status(CONFLICT_STATUS_CODE).build();
