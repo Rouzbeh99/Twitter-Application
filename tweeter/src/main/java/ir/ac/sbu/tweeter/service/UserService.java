@@ -62,20 +62,6 @@ public class UserService {
         return response;
     }
 
-//    @GET
-//    @Path("{username}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response loadByUsername(@PathParam("username") String username) {
-//        Response response;
-//        try {
-//            User user = userManager.loadByUsername(username);
-//            UserResponseDto dto = createResponseDto(user);
-//            response = Response.ok(dto).build();
-//        } catch (UserNotFoundException e) {
-//            response = status(NOT_FOUND).build();
-//        }
-//        return response;
-//    }
 
     @POST
     @Path("users")

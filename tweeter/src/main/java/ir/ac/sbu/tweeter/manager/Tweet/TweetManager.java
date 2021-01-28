@@ -89,6 +89,17 @@ public class TweetManager {
             Collections.sort(user1.getTimeline());
         }
     }
+    @Transactional
+    public void unRetweet(String tweetUUID, String username) {
+        User user = userManager.loadByUsername(username);
+        Tweet tweet = loadByUUID(tweetUUID);
+        user.getRetweets().remove(tweet);
+        tweet.getRetweetedBy().remove(user);
+        user.getTimeline().remove(tweet);
+        for (User user1 : user.getFollowers()) {
+            user1.getTimeline().remove(tweet);
+        }
+    }
 
     @Transactional
     public void like(String tweetUUID, String username) {
@@ -96,6 +107,14 @@ public class TweetManager {
         Tweet tweet = loadByUUID(tweetUUID);
         user.getLikedTweets().add(tweet);
         tweet.getLikedBy().add(user);
+    }
+
+    @Transactional
+    public void unLike(String tweetUUID, String username) {
+        User user = userManager.loadByUsername(username);
+        Tweet tweet = loadByUUID(tweetUUID);
+        user.getLikedTweets().remove(tweet);
+        tweet.getLikedBy().remove(user);
     }
 
     private Tweet createEntity(TweetSaveRequestDto saveDto) {

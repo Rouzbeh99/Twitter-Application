@@ -122,10 +122,25 @@ public class TweetService {
     @Path("like")
     public Response like(@QueryParam("uuid") String tweetUUID,
                          @QueryParam("username") String ownerUsername){
-        log.info("method invoked");
         Response response;
         try {
             tweetManager.like(tweetUUID, ownerUsername);
+            log.info("manager finished");
+            response = noContent().build();
+        } catch (TweetNotFoundException | UserNotFoundException e) {
+            log.info("exception thrown");
+            response = status(NOT_FOUND).build();
+        }
+        return response;
+    }
+
+    @GET
+    @Path("unlike")
+    public Response unLike(@QueryParam("uuid") String tweetUUID,
+                         @QueryParam("username") String ownerUsername){
+        Response response;
+        try {
+            tweetManager.unLike(tweetUUID, ownerUsername);
             log.info("manager finished");
             response = noContent().build();
         } catch (TweetNotFoundException | UserNotFoundException e) {
@@ -142,6 +157,20 @@ public class TweetService {
         Response response;
         try {
             tweetManager.retweet(tweetUUID, ownerUsername);
+            response = noContent().build();
+        } catch (TweetNotFoundException | UserNotFoundException e) {
+            response = status(NOT_FOUND).build();
+        }
+        return response;
+    }
+
+    @GET
+    @Path("unretweet")
+    public Response unRetweet(@QueryParam("uuid") String tweetUUID,
+                            @QueryParam("username") String ownerUsername){
+        Response response;
+        try {
+            tweetManager.unRetweet(tweetUUID, ownerUsername);
             response = noContent().build();
         } catch (TweetNotFoundException | UserNotFoundException e) {
             response = status(NOT_FOUND).build();
