@@ -25,6 +25,7 @@ public class User {
     private String password;
 
     @Column(unique = true, nullable = false)
+    @EqualsAndHashCode.Include
     private String username;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -76,8 +76,10 @@ public class TweetManager {
     public void retweet(String tweetUUID, String username) {
         User user = userManager.loadByUsername(username);
         Tweet tweet = loadByUUID(tweetUUID);
-        user.getRetweets().add(tweet);
-        tweet.getRetweetedBy().add(user);
+        if(!tweet.getRetweetedBy().contains(user)) {
+            user.getRetweets().add(tweet);
+            tweet.getRetweetedBy().add(user);
+        }
         if(!user.getTimeline().contains(tweet)) {
             user.getTimeline().add(tweet);
             Collections.sort(user.getTimeline());
@@ -85,8 +87,8 @@ public class TweetManager {
         for (User user1 : user.getFollowers()) {
             if(!user1.getTimeline().contains(tweet)) {
                 user1.getTimeline().add(tweet);
+                Collections.sort(user1.getTimeline());
             }
-            Collections.sort(user1.getTimeline());
         }
     }
     @Transactional

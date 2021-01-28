@@ -143,10 +143,4 @@ public class UserManager {
                 .build();
     }
 
-//    @Transactional
-//    public List<Tweet> updatePicture(String username, String Mid){
-//
-//    }
-
-
 }
