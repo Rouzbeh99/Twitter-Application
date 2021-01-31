@@ -1,1 +1,1 @@
-# Tweeter-like-application
+# Tweeter-application
